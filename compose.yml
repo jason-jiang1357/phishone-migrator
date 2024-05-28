@@ -1,0 +1,13 @@
+services:
+  migrator:
+    container_name: phishone-migrator
+    build: .
+    image: phishone-migrator:latest
+
+    # 备份导出 数据
+    command: "python backup.py"
+    # 恢复导入 数据
+    # command: "python load.py"
+
+    volumes:
+      - ./backup_data:/backup_data
