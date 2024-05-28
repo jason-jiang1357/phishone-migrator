@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import sys
@@ -34,7 +35,7 @@ async def get_token(session,config: dict) -> str:
     
     async with session.post(url,data=config["login_data"]) as resp:
         if resp.status != 200:
-            logger.error(f"Failed to get response from {url}")
+            logger.error(f"登录失败: {url} {await resp.text()}")
             sys.exit(1)
         response: dict = await resp.json()
         token = response["access"]
@@ -86,36 +87,44 @@ class Backup(Base):
 class Load(Base):
     """导入数据基础类"""
 
-    async def send_post_request(self,url: str,data:dict,headers: dict) -> dict:
+    async def send_post_request(self,url: str,data:dict,extend_headers: None|dict = None) -> dict:
         """发送post请求"""
+        
+        headers = self.headers | extend_headers if extend_headers else self.headers
+
         async with self.session.post(url,data=data,headers=headers) as resp:
             if resp.status != 201:
-                logger.error(f"Failed to get response from {self.home_url} {await resp.text()}")
+                logger.error(f"post请求失败 {self.home_url} {await resp.text()}")
                 return
             response: dict = await resp.json()
             return response
 
-    async def upload_image(self,image_dir: str,image_name:str) -> str:
+    async def upload_image(self,full_image_name:str) -> str:
         """上传图片,返回图片url"""
         url = self.home_url + "/api/images"
-        image_path = os.path.join(backup_data_dir,image_dir,image_name)
+        image_name = os.path.basename(full_image_name)
 
         # 上传图片
-        with open(image_path,"rb") as image_file:
+        with open(full_image_name,"rb") as image_file:
             form = aiohttp.FormData()
-            form.add_field('file',
+            form.add_field('upload',
                             image_file,
                             filename=image_name,
                             content_type='image/png')
-            
-        res = await self.send_post_request(url, data=form, headers=self.headers)
+            res = await self.send_post_request(url, data=form)
         image_url = res["url"]
-        logger.info(f"上传图片成功,图片url: {image_url}")
+        logger.info(f"上传图片成功, {image_url}")
         return image_url
     
-    async def upload_email_template(self,template: dict) -> dict:
+    async def upload_email_template(self,template: dict):
         """上传邮件模板"""
         url = self.home_url + "/api/templates/"
-        res = await self.send_post_request(url,data=template,headers=self.headers)
-        logger.info(f"上传邮件模板成功 {res}")
+
+        # 测试
+        # template["name"] = template["name"] + "test13"
+
+        if res := await self.send_post_request(url,data=json.dumps(template),extend_headers={"Content-Type":"application/json"}):
+            logger.info(f"上传邮件模板成功 {res["name"]}")
+        else:
+            logger.error(f"上传邮件模板失败 {res}")
         

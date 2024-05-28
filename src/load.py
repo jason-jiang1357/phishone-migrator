@@ -1,16 +1,13 @@
 import asyncio
 import logging
 import os
-import sys
-import tomllib
 
 import aiohttp
 
-from load_template import BackupEmailTemplate
-
-logging.basicConfig(level=logging.INFO)
+from load_template import LoadEmailTemplate
 from utils import get_project_config, get_token
 
+logger = logging.getLogger(os.path.basename(__file__).split(".")[0])
 
 def init_env(config: dict,token: str):
     """初始化环境"""
@@ -31,10 +28,10 @@ async def main():
         # 初始化环境
         config = init_env(config,token)
 
-        logging.warning("1.导入模版... ")
-
-        # backup = BackupEmailTemplate(session,config)
-        # await backup.backup()
+        logger.warning("1.导入模版... ")
+        load_template = LoadEmailTemplate(session,config)
+        await load_template.load()
+        logger.warning("1.导入模版... 完成")
         
 asyncio.run(main())
 

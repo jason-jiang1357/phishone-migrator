@@ -5,9 +5,9 @@ services:
     image: phishone-migrator:latest
 
     # 备份导出 数据
-    command: "python backup.py"
+    # command: "python backup.py"
     # 恢复导入 数据
-    # command: "python load.py"
+    command: "python load.py"
 
     volumes:
       - ./backup_data:/backup_data
