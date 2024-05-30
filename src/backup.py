@@ -10,7 +10,7 @@ from utils import backup_data_dir, get_project_config, get_token
 logger = logging.getLogger(os.path.basename(__file__).split(".")[0])
 
 
-def init_env(config: dict,token: str):
+def init_env(config: dict, token: str):
     """初始化环境"""
     # 模版资源 封面图片
     images_dir = f"{backup_data_dir}/template_images"
@@ -22,7 +22,8 @@ def init_env(config: dict,token: str):
     if not os.path.exists(files_dir):
         os.makedirs(files_dir)
 
-    return config | {"token":token}
+    return config | {"token": token}
+
 
 async def main():
     """备份导出 数据脚本入口"""
@@ -33,14 +34,15 @@ async def main():
         logger.info(config)
 
         # 登录
-        token: str = await get_token(session,config)
+        token: str = await get_token(session, config)
         logger.info(token)
 
         # 初始化环境
-        config = init_env(config,token)
+        config = init_env(config, token)
 
         logger.warning("1.备份模版... ")
-        backup = BackupEmailTemplate(session,config)
+        backup = BackupEmailTemplate(session, config)
         await backup.backup()
-        
+
+
 asyncio.run(main())

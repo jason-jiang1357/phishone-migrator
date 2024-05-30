@@ -8,6 +8,3 @@ services:
     # command: "python backup.py"
     # 恢复导入 数据
     command: "python load.py"
-
-    volumes:
-      - ./backup_data:/backup_data

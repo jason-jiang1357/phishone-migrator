@@ -9,9 +9,11 @@ from utils import get_project_config, get_token
 
 logger = logging.getLogger(os.path.basename(__file__).split(".")[0])
 
-def init_env(config: dict,token: str):
+
+def init_env(config: dict, token: str):
     """初始化环境"""
-    return config | {"token":token}
+    return config | {"token": token}
+
 
 async def main():
     """备份导出 数据脚本入口"""
@@ -22,19 +24,16 @@ async def main():
         logging.info(config)
 
         # 登录
-        token: str = await get_token(session,config)
+        token: str = await get_token(session, config)
         logging.info(token)
 
         # 初始化环境
-        config = init_env(config,token)
+        config = init_env(config, token)
 
         logger.warning("1.导入模版... ")
-        load_template = LoadEmailTemplate(session,config)
+        load_template = LoadEmailTemplate(session, config)
         await load_template.load()
         logger.warning("1.导入模版... 完成")
-        
+
+
 asyncio.run(main())
-
-
-
-
