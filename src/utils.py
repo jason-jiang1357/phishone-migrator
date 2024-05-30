@@ -13,12 +13,23 @@ backup_data_dir = "/backup_data"
 
 def get_project_config() -> dict:
     """获取项目配置"""
-    try:
-        with open("config.toml", "rb") as f:
-            config = tomllib.load(f)
-    except FileNotFoundError:
-        logging.error("配置文件`config.toml`不存在")
-        sys.exit(1)
+    # 从toml文件中读取配置
+    # try:
+    #     with open("config.toml", "rb") as f:
+    #         config = tomllib.load(f)
+    # except FileNotFoundError:
+    #     logging.error("配置文件`config.toml`不存在")
+    #     sys.exit(1)
+
+    # 读取环境变量
+    config = {
+        "home_url": os.getenv("HOME_URL"),
+        "login_data": {
+            "mobile": os.getenv("MOBILE"),
+            "password": os.getenv("PASSWORD"),
+        },
+        "debug": os.getenv("DEBUG") == "True",
+    }
     return config
 
 

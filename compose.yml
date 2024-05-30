@@ -3,6 +3,7 @@ services:
     container_name: phishone-migrator
     build: .
     image: phishone-migrator:latest
+    env_file: .env
 
     # 备份导出 数据
     # command: "python backup.py"
