@@ -65,9 +65,7 @@ class BackupEmailTemplate(Backup):
             await self.handle_template_content(current_res)
 
             # 获取下一页的url.
-            # fix http -> https
-            email_template_url = (
-                is_next_page.replace("http", "https") if is_next_page else None
-            )
+            email_template_url = is_next_page if is_next_page else None
+            
 
         logger.warning("1.备份模版...完成")
