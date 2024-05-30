@@ -1,8 +1,0 @@
-# true: debug mode, false: release mode
-debug = xxx
-
-home_url = "xxx"
-
-[login_data]
-mobile = "xxx"
-password = "xxx"
